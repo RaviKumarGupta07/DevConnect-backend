@@ -1,0 +1,25 @@
+- create a repository
+- initialize a repository
+- node_modules , package.json , package-lock.json
+- installed express
+- created a server
+- made my server to listen to port ie 7777
+- written request handlers for /test , /hello
+- installed nodemon and updated scripts in pckg.json
+
+- initialized git
+- .gitignore (included node_modules)
+- created a remote repo on github
+- pushed all code to remote origin
+- played with routes (app.use("/route" , (req,res)=>{}) method) ie "/" , "/test" , "/hello"
+- learnt that order of routes matter a lot
+- by default urls we put on browser are GET api call
+- for testing other http methods , in chromes console used => 
+    - fetch("http://localhost:7777/test",{method:"DELETE",body:"some stuff.."})
+- good Practice :  for testing http methods , use Postman Software
+- created workspace > test colection 
+    - written logic to handle GET , POST , PATCH , PUT , DELETE API CALLS and tested them on postman
+- exploring routing and use of ? , * , + , () in the routes
+- use of reges in routes ie /a/ , /.*fly$/
+- Reading query parameters in routes using req.query => /user?id=123&address=UP
+- Reading dynamic route parameters using req.params => /user/:id/:address
