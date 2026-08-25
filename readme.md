@@ -23,3 +23,9 @@
 - use of reges in routes ie /a/ , /.*fly$/
 - Reading query parameters in routes using req.query => /user?id=123&address=UP
 - Reading dynamic route parameters using req.params => /user/:id/:address
+- what is middlewares? why do we need them ? ✅
+- How expressjs basically handles requests behind the scenes? ✅
+- difference between app.use and app.all
+- write a dummy auth middleware for admin 
+- write a dummy auth middleware for all user routes , except /user/login route
+- error handling using app.use("/",(err,req,res,next)=>{})
