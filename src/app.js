@@ -75,9 +75,11 @@ app.get("/test", [(req, res, next) => {
 // })
 
 app.post("/test", (req, res) => {
+    throw new Error("error from post /test route");
     res.send("post req for test route.");
 })
 app.put("/test", (req, res) => {
+    throw new Error;
     res.send("put req for test route.")
 })
 app.patch("/test", (req, res) => {
@@ -98,6 +100,16 @@ app.delete("/test", (req, res) => {
 // app.use("/",(req,res)=>{
 //     res.send("Namaste paji ");
 // })
+
+// error handler
+app.use("/", (err, req, res, next) => {
+    if (err) {
+        console.log("error");
+        res.status(500).send(err.message || "Internal server error");
+    }else{
+        res.send("/ route handler");
+    }
+})
 
 app.listen(7777, () => {
     console.log("backend server started at port no 7777 ");
