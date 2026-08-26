@@ -40,3 +40,17 @@
 - create model => mongoose.model("User",userSchema)
     - industry standard says to keep first letter capital letter in model name
 - created POST /signup route and created doucuments inside devConnect database
+    - error handling using try catch block
+
+- learnt saving post data using req.body (postman POST /signup : body>raw>json)
+- difference between json object and js object
+- created api for find user : GET /user api 
+    - by Model.find({emailId:req.body.email})
+    - by Model.findOne({})
+    - by Model.findById(id) or Model.findById({_id:id})<= use mongoose docs for more information:AKS
+- created api for find all : GET /feed api
+    - by Model.find({}) <= use mongoose docs for more information:AKS
+- created api for delete user by Id : DELETE /delete
+    - by findByIdAndDelete(req.body.id) <= use mongoose docs for more information:AKS
+- created api for update user : PATCH /update
+    - by findByIdAndUpdate(req.body.id , {req.body}) <= use mongoose docs for more information:AKS
