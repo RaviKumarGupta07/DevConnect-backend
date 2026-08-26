@@ -1,116 +1,39 @@
 const express = require("express");
-const { adminAuthMidddleware } = require("./middlewares/adminAuthMidddleware");
-const { userAuthMiddleware } = require("./middlewares/userAuthMiddleware");
+const connectDB = require("./config/database");
 const app = express();
+const User = require("./models/user");
 
-// const handler = (req, res) => {
-//     res.send("handler");
-// }
-// app.get(/\/ab?cd/,handler) // b optional
-// app.get(/\/ab*cd/,handler); // b* => 0 b or more bs
-// app.get(/\/ab+cd/ , handler); // b* => 1 b or more
-// app.get(/\/a(bc)?d/ , handler) ; // (bc) optional
-// app.get(/\/ab.*cd/,handler); // ab+zero or more characters+cd
-// app.get(/a/,handler);
-// app.get(/\/a/, handler);
-// app.get(/\/.*fly$/,handler);
-
-app.use("/admin",
-    adminAuthMidddleware,   // /admin and all sub-routes
-)
-
-// app.all("/admin",
-//     adminAuthMidddleware, // only exact /admin, all HTTP methods
-// )
-
-app.get("/admin/getAllUsers", (req, res) => {
-    res.send("all users data")
+app.post("/signup", async (req, res) => {
+    const userObj = {
+        firstName: "Raj",
+        lastName: "Kumar",
+        phone: 1122334488,
+        address: "UP, ftp",
+        age: 20,
+    };
+    const user = new User(userObj);
+    await user.save()
+    .then(()=>{
+        // throw new Error("just checking 🤪")
+        res.send("User signed up successfully");
+    })
+    .catch((err)=>{
+        console.log("error ocured while creating document : "+err.message);
+        res.status(500).send("error ocured while creating document : "+err.message);
+    });
+    
 })
 
-app.get("/user/login", (req, res) => {
-    res.send("/user/login route handler")
-})
 
-app.use("/user",
-    userAuthMiddleware,
-    (req, res) => {
-        res.send("user Data after authentication");
-    }
-)
-
-
-app.get("/test", [(req, res, next) => {
-    console.log("1st route handler");
-    // res.send("response from 1st round handler") ;
-    next();
-},
-[(req, res, next) => {
-    console.log("2nd route handler");
-    // res.send("response from 2nd route handler")
-    next();
-},
-(req, res, next) => {
-    console.log("3rd route handler");
-    // res.send("res from 3rd rh");
-    next();
-}],
-(req, res, next) => {
-    console.log("4th route handler");
-    res.send("res from 4th rh");
-}])
-
-// app.get("/test/:id/:address" , (req,res)=>{
-//     console.log("dynamic parameter read")
-//     console.log(req.params);
-//     res.send("dynamic parameter read")
-// })
-
-// app.get("/test", (req, res) => {
-//     console.log("query parameters read");
-//     console.log(req.query);
-//     res.send({
-//         name: "Ravi",
-//         state: "UP"
-//     })
-// })
-
-app.post("/test", (req, res) => {
-    throw new Error("error from post /test route");
-    res.send("post req for test route.");
-})
-app.put("/test", (req, res) => {
-    throw new Error;
-    res.send("put req for test route.")
-})
-app.patch("/test", (req, res) => {
-    res.send("patch req for test route.")
-})
-app.delete("/test", (req, res) => {
-    res.send("delete request for test route.")
-})
-
-// app.use("/hello",(req,res)=>{
-//     res.send("Hello Hello Hello")
-// })
-
-// app.use("/test",(req,res)=>{
-//     res.send("Test Test Test ");
-// })
-
-// app.use("/",(req,res)=>{
-//     res.send("Namaste paji ");
-// })
-
-// error handler
-app.use("/", (err, req, res, next) => {
-    if (err) {
-        console.log("error");
-        res.status(500).send(err.message || "Internal server error");
-    }else{
-        res.send("/ route handler");
-    }
-})
-
-app.listen(7777, () => {
-    console.log("backend server started at port no 7777 ");
-})
+connectDB()
+    .then(
+        () => {
+            console.log("database connection successfull 👍")
+            app.listen(7777, () => {
+                console.log("backend server started at port no 7777 ");
+            })
+        }
+    )
+    .catch((err) => {
+        console.log("Error occured : " + err.message);
+    })

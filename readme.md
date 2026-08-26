@@ -29,3 +29,14 @@
 - write a dummy auth middleware for admin 
 - write a dummy auth middleware for all user routes , except /user/login route
 - error handling using app.use("/",(err,req,res,next)=>{})
+
+- do # npm install mongoose  , mongoose => helps to communicate between  our backend and database (performs crud , db connection)
+- created src/config/database.js => connectDB funcn
+    - "...mongodb.net/devConnect" in uri(uniform resource identifier) it creates "devConnect" database if not exist.
+- AKS : folow mongoogse resources best 
+- imported connectDB function into app.js
+- performed best practice => first connect to database and then make your app to listen the server incoming request
+- created userSchema inside src/models/userSchema.js
+- create model => mongoose.model("User",userSchema)
+    - industry standard says to keep first letter capital letter in model name
+- created POST /signup route and created doucuments inside devConnect database
