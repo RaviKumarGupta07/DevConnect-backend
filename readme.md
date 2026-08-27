@@ -54,3 +54,13 @@
     - by findByIdAndDelete(req.body.id) <= use mongoose docs for more information:AKS
 - created api for update user : PATCH /update
     - by findByIdAndUpdate(req.body.id , {req.body}) <= use mongoose docs for more information:AKS
+
+- added valitdtion in schema using mongoose type schema options , and type specific options on each field of user Schema 
+    - used required , trim , lowerCase ,unique , default , validate:(v)=>v , match:/regex/ etc... 
+- also explores npm validator library
+    - used isEmail , isStrongPassword , isURL validator methods given by this library 
+- sanitization -> api level validation
+    - for POST /signUp and PATCH /update , did api level validation
+        - ie. emailId , password should not be updated :in: POST /update 
+        - 💀 never trust on your req.body <= that is why sanitization is needed 
+        - some fields like , skills : {type:[String]} will not have more than 10 elements for POST /signup , PATCH /update
