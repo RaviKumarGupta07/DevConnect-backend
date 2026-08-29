@@ -4,52 +4,77 @@ const app = express();
 const User = require("./models/user");
 var validator = require('validator');
 const { isURL } = require("validator");
+const { validateSignUpReqBody } = require("./utils/validateSignUpReqBody");
+const bcrypt = require("bcrypt");
+const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
+const { userAuthMiddleware } = require("./middlewares/userAuthMiddleware");
 
 app.use(express.json()); // convert request json body into js object
+app.use(cookieParser()); // to parse req.cookies so that server can read
 
 // create user api
 app.post("/signup", async (req, res) => {
-    // console.log(req.body);
     try {
-        const { emailId, password, photoURL } = req.body;
-
-        const isEmailValid = validator.isEmail(emailId);
-        if (!isEmailValid) throw new Error("Email Not Valid");
-
-        const isStrongPassword = validator.isStrongPassword(password);
-        if (!isStrongPassword) throw new Error("password should be strong : { minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1 }");
-
-        if (photoURL && !validator.isURL(photoURL)) throw new Error("photoURL not valid");
-
+        await validateSignUpReqBody(req);
         const user = new User(req.body);
-
-        const k = await user.save();
-        // console.log(k);
-        // throw new Error("just checking 🤪")
+        const savedUser = await user.save();
         res.send("User signed up successfully");
     }
     catch (err) {
-        console.log("error ocured while creating document : " + err.message);
-        res.status(500).send("error ocured while creating document : " + err.message);
+        res.status(500).send("ERRROR : " + err.message);
     };
 })
 
-// get user api
-app.get("/user", async (req, res) => {
-    const userEmail = req.body.emailId;
+// POST /login
+app.post("/login", async (req, res) => {
     try {
-        const user
-            = await User.findById(req.body.userId)
-        // = await User.find({ emailId: userEmail });
-        // = await User.findOne({ emailId: userEmail });
+        const { emailId, password } = req.body;
 
-        if (user) {
-            res.send(user);
-        } else {
-            res.status(404).send("User not found");
-        }
+        // email exist or not
+        const user = await User.findOne({ emailId: emailId });
+        if (!user) throw new Error("Invalid Credential !");
+
+        const myPlaintextPassword = password;
+        const hashedPassword = user.password;
+
+        // password validation
+        const isPasswordCorrect = await user.validatePassword(password); // using Schema.method
+        // const isPasswordCorrect = await bcrypt.compare(myPlaintextPassword, hashedPassword);
+        if (!isPasswordCorrect) throw new Error("Invalid Credential !");
+
+        // token generate and stored in cookie
+        const token = await user.getJWT();// using Schema.method
+        // const token = await jwt.sign({ _id: user._id }, 'DevConnect791', { expiresIn: '2d' }); 
+        res.cookie("token", token, {
+            expires: new Date(Date.now() + 2 * 24 * 3600000), // cookie will be removed after 2 days 
+        });
+
+        res.send("User Logged In ");
     } catch (err) {
-        res.status(400).send("something went wrong");
+        res.status(400).send("ERROR : " + err.message);
+    }
+})
+
+// get user api
+app.get("/profile", userAuthMiddleware, async (req, res) => {
+    try {
+        const { _id } = req;
+        const user = await User.findById(_id);
+        if (!user) res.status(404).send("No data Found");
+        else res.send(user);
+    } catch (err) {
+        res.status(400).send("ERROR : " + err.message);
+    }
+})
+
+app.post("/sendConnectionRequest", userAuthMiddleware, async (req, res) => {
+    try {
+        const { _id } = req;
+        const user = await User.findById(_id);
+        res.send(user.firstName + " sent connection request .");
+    } catch (err) {
+        res.status(404).send("ERROR : " + err.message);
     }
 })
 
@@ -92,9 +117,9 @@ app.patch("/update/:userId", async (req, res) => {
     try {
         if (!provided_fields.every(field =>
             ALLOWED_UPDATE_FIELDS.includes(field))) {
-                throw new Error("  ALLOWED_UPDATE_FIELDS are firstName, lastName, age, gender, about, skills, photoURL ")
+            throw new Error("  ALLOWED_UPDATE_FIELDS are firstName, lastName, age, gender, about, skills, photoURL ")
         }
-        const user = await User.findByIdAndUpdate(userId, dataObj ,{runValidators:true});
+        const user = await User.findByIdAndUpdate(userId, dataObj, { runValidators: true });
         // console.log(user);
         if (user) {
             res.send("User Updated Successfully");
@@ -110,11 +135,6 @@ app.patch("/update/:userId", async (req, res) => {
 connectDB()
     .then(
         () => {
-            // const obj = {name:"rr"};
-            // const arr = [];
-            // // console.log(obj===true);
-            // if(arr) console.log(true)+ " arr";
-            // else console.log(false);
             console.log("database connection successfull 👍")
             app.listen(7777, () => {
                 console.log("backend server started at port no 7777 ");
@@ -122,5 +142,5 @@ connectDB()
         }
     )
     .catch((err) => {
-        console.log("Error occured : " + err.message);
+        res.status(500).send("Error : " + err.message);
     })

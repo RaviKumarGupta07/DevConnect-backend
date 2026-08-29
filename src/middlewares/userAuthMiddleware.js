@@ -1,12 +1,20 @@
-const userAuthMiddleware = (req,res,next)=>{
-    const token = "abc";
-    if(token === "abc"){
+const jwt = require("jsonwebtoken");
+
+const userAuthMiddleware = async (req, res, next) => {
+    try {
+        const { token } = req.cookies;
+        if (!token) throw new Error("invalid token");
+
+        const decodedObj = jwt.verify(token, "DevConnect791");
+        const { _id } = decodedObj;
+        if (!_id) throw new Error("invalid token");
+        req._id = _id;
         next();
-    }else{
-        res.status(401).send("unauthorized");
+    } catch (err) {
+        res.status(400).send("ERROR : " + err.message);
     }
 }
 
 module.exports = {
-    userAuthMiddleware ,
+    userAuthMiddleware,
 }

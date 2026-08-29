@@ -64,3 +64,22 @@
         - ie. emailId , password should not be updated :in: POST /update 
         - 💀 never trust on your req.body <= that is why sanitization is needed 
         - some fields like , skills : {type:[String]} will not have more than 10 elements for POST /signup , PATCH /update
+
+- validate data in signup Api (helper / utility function inside src>utils folder)
+- install bcrypt library
+- create PasswordHash using bcrypt.hash
+- create login api
+    - check if email is in db or not 
+    - compare password & throw error if password is invalid
+
+- install cookie-parser lib (npm) <= it provides middleware to read the cookies
+- just send dummy cookie to user (for learning purpose)
+- create GET /profile API and check if you get the cookie back or not 
+- install jsonwebtoken lib (npm)
+- in login API , after email & password validation , generate a jwt and send it to user in cookies
+- read the cookies inside your profile API and find the logged in user
+- auth logic injected in userAuth middleware (this middleware will handle http request and check if user logged in or not)
+- added the user auth middleware in GET /profile API and new POST /sendConnectionRequest API
+- set the expiry of jwt token and cookies to 7 days
+- create userSchema method to het jwt token => getJWT()
+- create userSchema method to compare password => validatePassword(plainTextPassword)
