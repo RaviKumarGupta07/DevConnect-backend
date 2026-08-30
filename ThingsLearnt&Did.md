@@ -81,5 +81,16 @@
 - auth logic injected in userAuth middleware (this middleware will handle http request and check if user logged in or not)
 - added the user auth middleware in GET /profile API and new POST /sendConnectionRequest API
 - set the expiry of jwt token and cookies to 7 days
-- create userSchema method to het jwt token => getJWT()
-- create userSchema method to compare password => validatePassword(plainTextPassword)
+- created userSchema method to het jwt token => getJWT()
+- created userSchema method to compare password => validatePassword(plainTextPassword)
+
+- created a apiList.md file to list all the Apis that I can think of
+    - group multiple routes under respective routers
+- read multiple documentaion for express.router
+- create routes folder for managing auth profile , request routers
+- create authRouter , profileRouter , requestRouter
+- import these routers into app.js
+- create POST /logout API
+- create PATCH /profile/edit API
+- create PATCH /profile/passwordUpdate API
+- make sure to validate all data in every post , patch apis

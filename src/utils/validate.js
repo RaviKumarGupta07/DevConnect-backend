@@ -18,7 +18,7 @@ const validateSignUpReqBody = async (req) => {
     // const myPlaintextPassword = password ;
     // const hashedPassword = await bcrypt.hash(myPlaintextPassword, 10);
     // console.log(hashedPassword);
-    req.body.password = hashedPassword ;
+    req.body.password = hashedPassword;
 
     if (photoURL) {
         const isPhotoURLValid = validator.isURL(photoURL);
@@ -27,4 +27,11 @@ const validateSignUpReqBody = async (req) => {
 
 }
 
-module.exports = { validateSignUpReqBody, };
+const checkEditReqBody = (req) => {
+    const allowedFields = ["firstName", "lastName", "age", "gender", "photoURL", "about", "skills"];
+    const providedFields = Object.keys(req.body);
+    console.log(providedFields);
+    return providedFields.every(field => allowedFields.includes(field));
+}
+
+module.exports = { validateSignUpReqBody, checkEditReqBody };

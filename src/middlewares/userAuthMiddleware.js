@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const User = require("../models/user");
 
 const userAuthMiddleware = async (req, res, next) => {
     try {
@@ -9,11 +10,14 @@ const userAuthMiddleware = async (req, res, next) => {
         const { _id } = decodedObj;
         if (!_id) throw new Error("invalid token");
         req._id = _id;
+        const loggedInUser = await User.findById(_id);
+        req.loggedInUser = loggedInUser ;
         next();
     } catch (err) {
         res.status(400).send("ERROR : " + err.message);
     }
 }
+
 
 module.exports = {
     userAuthMiddleware,
