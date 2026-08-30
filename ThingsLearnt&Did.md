@@ -87,10 +87,10 @@
 - created a apiList.md file to list all the Apis that I can think of
     - group multiple routes under respective routers
 - read multiple documentaion for express.router
-- create routes folder for managing auth profile , request routers
-- create authRouter , profileRouter , requestRouter
-- import these routers into app.js
-- create POST /logout API
-- create PATCH /profile/edit API
-- create PATCH /profile/passwordUpdate API
+- created routes folder for managing auth profile , request routers
+- created authRouter , profileRouter , requestRouter
+- imported these routers into app.js
+- created POST /logout API
+- created PATCH /profile/edit API
+- created PATCH /passwordUpdate API
 - make sure to validate all data in every post , patch apis
