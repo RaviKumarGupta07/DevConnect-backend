@@ -11,5 +11,6 @@
 - POST /passwordUpdate
 
 ## requestRouter
-- POST /sendConnectionRequest
+- POST /request/send/ignored/:toUserId
+- POST /request/send/ignored/:toUserId
 

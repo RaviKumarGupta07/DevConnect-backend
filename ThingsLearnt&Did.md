@@ -94,3 +94,15 @@
 - created PATCH /profile/edit API
 - created PATCH /passwordUpdate API
 - make sure to validate all data in every post , patch apis
+
+- created connectionRequestSchema
+- created connection request api :-
+    - dynamic route POST /request/:status/:userId
+    - validation (almost all corner cases included)
+        - allowedStatus = ["ignored","interested"]
+        - if(fromUserId.equals(toUserId) throw new Error("no user can send req to himself ")
+        - if connection req already exist : throw new Error("no user send request more than 1 ")
+- connectionRequestSchema.pre("save",function(){..}) creted
+- done compound Indexing for faster responses (suppose if 1million connection requests exist)
+    - // indexing
+    - connectionRequestSchema.index({ fromUserId: 1, toUserId: 1,}) ;

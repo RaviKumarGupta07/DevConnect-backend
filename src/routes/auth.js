@@ -10,7 +10,7 @@ router.post("/signup", async (req, res) => {
         await validateSignUpReqBody(req);
         const user = new User(req.body);
         const savedUser = await user.save();
-        res.send("User signed up successfully");
+        res.send(`${user.firstName} signed up successfully`);
     }
     catch (err) {
         res.status(500).send("ERRROR : " + err.message);
@@ -41,7 +41,7 @@ router.post("/login", async (req, res) => {
             expires: new Date(Date.now() + 2 * 24 * 3600000), // cookie will be removed after 2 days 
         });
 
-        res.send("User Logged In ");
+        res.send(`${user.firstName} Logged In `);
     } catch (err) {
         res.status(400).send("ERROR : " + err.message);
     }
@@ -52,8 +52,6 @@ router.post("/logout",(req,res,next)=>{
     res
     .cookie("token",null,{ expires: new Date(Date.now()) })
     .send("Logout successful !!") ;
-    console.log(req._id);
-    console.log(req.loggedInUser);
 })
 
 
