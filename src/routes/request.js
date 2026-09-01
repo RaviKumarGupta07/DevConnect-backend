@@ -10,15 +10,15 @@ router.post("/request/send/:status/:toUserId", userAuthMiddleware, async (req, r
         const fromUserId = loggedInUser._id;
         const { status, toUserId } = (req.params);
 
-        const allowed_status = ["ignored" ,"interested"];
-        if(!allowed_status.includes(status)) throw new Error(`invalid request status : ${status} `);
+        const allowed_status = ["ignored", "interested"];
+        if (!allowed_status.includes(status)) throw new Error(`invalid request status : ${status} `);
 
         // if (fromUserId.equals(toUserId)) { // handled by connectionRequestSchema.pre('save', function() {..})
         //     return res.status(400).send({ message: `cant send ${status} request to same user` });
         // }
 
         const toUser = await User.findById(toUserId);
-        if(!toUser) throw new Error(`The User , which you wnat to send ${status} request, does not exist`);
+        if (!toUser) throw new Error(`The User , which you wnat to send ${status} request, does not exist`);
 
         const existingConnectionReqs = await ConnectionRequest.findOne({
             $or: [
@@ -26,7 +26,7 @@ router.post("/request/send/:status/:toUserId", userAuthMiddleware, async (req, r
                 { fromUserId: toUserId, toUserId: fromUserId }
             ]
         })
-        console.log("existing :", existingConnectionReqs);
+
         if (existingConnectionReqs) {
             return res.status(400).send({ message: "This connection request already exist" });
         }
@@ -40,6 +40,36 @@ router.post("/request/send/:status/:toUserId", userAuthMiddleware, async (req, r
         res.send(`${loggedInUser.firstName} sent ${status} request to ${toUser.firstName}`);
     } catch (err) {
         res.status(404).send("ERROR : " + err.message);
+    }
+})
+
+router.post("/request/review/:status/:fromUserId", userAuthMiddleware, async (req, res) => {
+    try {
+        const { status, fromUserId } = req.params;
+        const { loggedInUser } = req;
+        const allowedStatus = ["accepted", "rejected"];
+        if (!allowedStatus.includes(status)) throw new Error(`the provided status => ${status} is not allowed`);
+
+        const fromUser = await User.findById(fromUserId);
+        if (!fromUser) throw new Error(`This user Id ${fromUserId} does not exist !!`)
+
+        const connectionRequest = await ConnectionRequest.findOne({
+            fromUserId: fromUserId,
+            toUserId: loggedInUser._id,
+            status: "interested",
+        });
+
+        if (!connectionRequest) throw new Error("Please check , Invalid connection Request !");
+
+        connectionRequest.status = status;
+        const cr = await connectionRequest.save();
+        console.log(cr);
+        res.json({
+            message: `${loggedInUser.firstName} ${status} connection request of ${fromUser.firstName}`
+        })
+
+    } catch (err) {
+        res.status(400).send("ERROR : " + err.message);
     }
 })
 

@@ -84,6 +84,7 @@
 - created userSchema method to het jwt token => getJWT()
 - created userSchema method to compare password => validatePassword(plainTextPassword)
 
+<!-- # 11 -->
 - created a apiList.md file to list all the Apis that I can think of
     - group multiple routes under respective routers
 - read multiple documentaion for express.router
@@ -95,9 +96,10 @@
 - created PATCH /passwordUpdate API
 - make sure to validate all data in every post , patch apis
 
+<!-- # 12 -->
 - created connectionRequestSchema
 - created connection request api :-
-    - dynamic route POST /request/:status/:userId
+    - dynamic route POST /request/send/:status/:userId
     - validation (almost all corner cases included)
         - allowedStatus = ["ignored","interested"]
         - if(fromUserId.equals(toUserId) throw new Error("no user can send req to himself ")
@@ -106,3 +108,15 @@
 - done compound Indexing for faster responses (suppose if 1million connection requests exist)
     - // indexing
     - connectionRequestSchema.index({ fromUserId: 1, toUserId: 1,}) ;
+
+<!-- # 13 -->
+- created connection request api :-
+    - dynamic route POST /request/review/:status/:userId
+- $or query used
+    - Model.find({$or:[{q:q},{q:q},{q:q}]})
+- learnt thought process b/w POST and GET
+    - in POST => we cant let attackers send any malicious data
+    - in GET => we cant let attackers to fetch any unnecessary data
+- learnt how to use ref and populate (included in syntax.md)
+- created GET /user/receivedRequests
+- create GET /user/connections
