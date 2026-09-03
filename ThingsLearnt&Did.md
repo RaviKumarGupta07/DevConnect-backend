@@ -119,4 +119,10 @@
     - in GET => we cant let attackers to fetch any unnecessary data
 - learnt how to use ref and populate (included in syntax.md)
 - created GET /user/receivedRequests
-- create GET /user/connections
+- created GET /user/connections
+
+<!-- # 14 -->
+- created GET /user/feed
+    - learnt $and , $or , $nin ,$ne and other query operator
+    - implemented pagination using .skip() and .limit() method
+    - created full GET /user/feed?page=2&limit=10 kind of api

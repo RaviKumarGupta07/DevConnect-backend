@@ -1,11 +1,13 @@
 const express = require("express");
 const { userAuthMiddleware } = require("../middlewares/userAuthMiddleware");
 const ConnectionRequest = require("../models/connectionRequest");
+const User = require("../models/user");
 const router = express.Router();
 
 // const USER_FIELDS = ["firstName" , "lastName" ,"gender", "age", "about", "skills" ]; // or
 const USER_FIELDS = "firstName lastName gender age about skills photoURL";
 
+// fetch all the requests data which is sent by others and received by loggedInUser
 router.get("/user/recievedRequests", userAuthMiddleware, async (req, res) => {
     try {
         const { loggedInUser } = req;
@@ -21,6 +23,7 @@ router.get("/user/recievedRequests", userAuthMiddleware, async (req, res) => {
     }
 })
 
+// fetch all the users data who are in the user's connection 
 router.get("/user/connections", userAuthMiddleware, async (req, res) => {
     try {
         const { loggedInUser } = req;
@@ -52,6 +55,42 @@ router.get("/user/connections", userAuthMiddleware, async (req, res) => {
     }
     catch (err) {
         res.status(400).send("ERROR : " + err.message);
+    }
+})
+
+// fetch all the users data for the loggedInUser feed
+router.get("/user/feed", userAuthMiddleware, async (req, res) => {
+    try {
+        const {page ,limit} = req.query ;
+        // sanitize your limit value 
+        const pageLimitNumber = (limit > 20 ? 20 : limit ) || 5 ;
+        const skipNumber = ((page-1)*pageLimitNumber) || 0 ;
+
+        const { loggedInUser } = req;
+        const connectionRequests = await ConnectionRequest.find({
+            $or: [
+                { fromUserId: loggedInUser._id },
+                { toUserId: loggedInUser._id }
+            ]
+        }).select("fromUserId toUserId");
+        const usersToBeHidden = new Set();
+        connectionRequests.forEach((obj, index) => {
+            usersToBeHidden.add(obj.fromUserId.toString());
+            usersToBeHidden.add(obj.toUserId.toString());
+        });
+        
+        const users = await User.find({
+            $and: [
+                { _id: { $nin: Array.from(usersToBeHidden) } },
+                { _id: { $ne: loggedInUser._id } }
+            ]
+        }).select(USER_FIELDS)
+        .limit(pageLimitNumber)
+        .skip(skipNumber);
+
+        res.json({ data: Array.from(users) });
+    } catch (err) {
+        res.status(400).json({ message: err.message })
     }
 })
 

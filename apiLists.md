@@ -23,4 +23,5 @@
 - GET /user/connections
     - this will fetch all the connections of the loggedInUser
 - GET /user/feed 
+    - this will fetch the users list for creating user feed
 
