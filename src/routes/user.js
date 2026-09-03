@@ -61,7 +61,8 @@ router.get("/user/connections", userAuthMiddleware, async (req, res) => {
 // fetch all the users data for the loggedInUser feed
 router.get("/user/feed", userAuthMiddleware, async (req, res) => {
     try {
-        const {page ,limit} = req.query ;
+        const page = parseInt(req.query.page) ;
+        const limit = parseInt(req.query.limit);
         // sanitize your limit value 
         const pageLimitNumber = (limit > 20 ? 20 : limit ) || 5 ;
         const skipNumber = ((page-1)*pageLimitNumber) || 0 ;
