@@ -4,7 +4,7 @@ const User = require("../models/user");
 const userAuthMiddleware = async (req, res, next) => {
     try {
         const { token } = req.cookies;
-        if (!token) throw new Error("invalid token");
+        if (!token) return res.status(401).send("Please Login !");
 
         const decodedObj = jwt.verify(token, "DevConnect791");
         const { _id } = decodedObj;
