@@ -41,7 +41,7 @@ router.post("/login", async (req, res) => {
             expires: new Date(Date.now() + 2 * 24 * 3600000), // cookie will be removed after 2 days 
         });
 
-        res.send(`${user.firstName} Logged In `);
+        res.json(user);
     } catch (err) {
         res.status(400).send("ERROR : " + err.message);
     }

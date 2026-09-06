@@ -2,7 +2,12 @@ const express = require("express");
 const connectDB = require("./config/database");
 const app = express();
 const cookieParser = require("cookie-parser");
+const cors = require("cors");
 
+app.use(cors({
+    origin:"http://localhost:7777",
+    credentials:true,
+}));
 app.use(express.json()); // convert request json body into js object
 app.use(cookieParser()); // to parse req.cookies so that server can read
 
@@ -27,5 +32,5 @@ connectDB()
         }
     )
     .catch((err) => {
-        res.status(500).send("Error : " + err.message);
+        console.error("Error : " + err.message);
     })
