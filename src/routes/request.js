@@ -63,7 +63,6 @@ router.post("/request/review/:status/:fromUserId", userAuthMiddleware, async (re
 
         connectionRequest.status = status;
         const cr = await connectionRequest.save();
-        console.log(cr);
         res.json({
             message: `${loggedInUser.firstName} ${status} connection request of ${fromUser.firstName}`
         })

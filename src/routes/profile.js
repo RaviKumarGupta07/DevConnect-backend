@@ -4,6 +4,7 @@ const User = require("../models/user");
 const router = express.Router();
 const { checkEditReqBody } = require("../utils/validate");
 const validator = require("validator");
+const { EDIT_ALLOWED_FIELDS } = require("../utils/constants");
 
 // get user api
 router.get("/profile", userAuthMiddleware, async (req, res) => {
@@ -20,7 +21,7 @@ router.get("/profile", userAuthMiddleware, async (req, res) => {
 router.patch("/profileEdit", userAuthMiddleware, async (req, res) => {
     try {
         const isReqBodyValid = checkEditReqBody(req);
-        if (!isReqBodyValid) throw new Error("invalid field sent !");
+        if (!isReqBodyValid) throw new Error(" These are allowed edit fields : " + EDIT_ALLOWED_FIELDS.join(" "));
 
         const { loggedInUser } = req;
         const providedFields = Object.keys(req.body);
@@ -35,7 +36,7 @@ router.patch("/profileEdit", userAuthMiddleware, async (req, res) => {
         })
 
     } catch (err) {
-        res.send("ERROR : " + err.message)
+        res.status(400).send("ERROR : " + err.message)
     }
 })
 

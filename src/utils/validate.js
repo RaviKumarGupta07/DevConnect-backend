@@ -1,6 +1,7 @@
 var validator = require("validator");
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
+const { EDIT_ALLOWED_FIELDS } = require("./constants");
 
 const validateSignUpReqBody = async (req) => {
 
@@ -17,7 +18,6 @@ const validateSignUpReqBody = async (req) => {
     const hashedPassword = await user.hashPassword(password); // schema.method
     // const myPlaintextPassword = password ;
     // const hashedPassword = await bcrypt.hash(myPlaintextPassword, 10);
-    // console.log(hashedPassword);
     req.body.password = hashedPassword;
 
     if (photoURL) {
@@ -28,10 +28,8 @@ const validateSignUpReqBody = async (req) => {
 }
 
 const checkEditReqBody = (req) => {
-    const allowedFields = ["firstName", "lastName", "age", "gender", "photoURL", "about", "skills"];
     const providedFields = Object.keys(req.body);
-    console.log(providedFields);
-    return providedFields.every(field => allowedFields.includes(field));
+    return (providedFields.every(field => EDIT_ALLOWED_FIELDS.includes(field)))
 }
 
 module.exports = { validateSignUpReqBody, checkEditReqBody };

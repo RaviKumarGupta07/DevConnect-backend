@@ -16,7 +16,6 @@ router.get("/user/recievedRequests", userAuthMiddleware, async (req, res) => {
             toUserId: loggedInUser._id,
             status: "interested",
         }).populate('fromUserId', USER_FIELDS)
-        // console.log(connectionReqs);
         res.json(connectionReqs);
     } catch (err) {
         res.status(400).send("ERROR : " + err.message)
@@ -44,7 +43,6 @@ router.get("/user/connections", userAuthMiddleware, async (req, res) => {
 
         const data = connectionRequests.map((row) => {
             if (loggedInUser._id.toString() === row.fromUserId.toString()) {
-                console.log("loggedInUser._id.toString() === row.fromUserId.toString() ");
                 return row.toUserId;
             } else {
                 return row.fromUserId;
