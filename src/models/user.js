@@ -7,14 +7,13 @@ const userSchema = new mongoose.Schema({
     firstName: {
         type: String,
         trim: true,
-        minLength: true,
+        minLength: 3,
         maxLength: 20,
         required: true,
     },
     lastName: {
         type: String,
         trim: true,
-        minLength: 3,
         maxLength: 20,
     },
     emailId: {
@@ -81,7 +80,7 @@ userSchema.method("hashPassword", async function (plainTextPassword) {
 
 userSchema.method("getJWT", async function () {
     const user = this;
-    const token = await jwt.sign({ _id: user._id }, 'DevConnect791', { expiresIn: '2d' });
+    const token = await jwt.sign({ _id: user._id }, 'DevConnect791', { expiresIn: '1d' });
     return token;
 })
 

@@ -40,7 +40,6 @@ router.get("/user/connections", userAuthMiddleware, async (req, res) => {
             ],
         }).populate("fromUserId", USER_FIELDS)
             .populate("toUserId", USER_FIELDS);
-        console.log("loggedInUser._id : ",loggedInUser._id.toString())
         const data = connectionRequests.map((row) => {
             if (loggedInUser._id.toString() === row.fromUserId._id.toString()) {
                 return row.toUserId;

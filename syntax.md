@@ -189,7 +189,7 @@ Logical operators return data based on boolean logic (and, or, and nor).
             useCase ie. Give me users whose age is NOT greater than 22.
             User.find({ age: { $not: { $gt: 22 } } })
 
-# parseInt()
+## parseInt()
 - The parseInt() function parses a string argument and returns an integer of the specified radix (the base in mathematical numeral systems).
 
         ie. 
@@ -209,3 +209,19 @@ Logical operators return data based on boolean logic (and, or, and nor).
         // 255 (upper-case hexadecimal with "0x" prefix)
         console.log(parseInt("xyz"));
         // NaN (input can't be converted to an integer)
+
+## res.cookie syntax
+
+    // this will store cookie in user's browser
+    res.cookie("token", token, {
+            expires: new Date(Date.now() + 24 * 3600000), // cookie will be removed after 1 days 
+        });
+
+## jwt token syntax
+
+        // this will generate token
+        const token = await jwt.sign({ _id: savedUser._id }, 'SECRETKEY_PROVIDEDBYYOU', { expiresIn: '1d' });
+
+        // this will decode your jwt token
+        const decodedObj = await jwt.verify(token, 'SECRETKEY_PROVIDEDBYYOU');
+        const { _id } = decodedObj;
