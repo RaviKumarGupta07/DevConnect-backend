@@ -59,9 +59,8 @@ router.post("/login", async (req, res) => {
 
 // POST /logout
 router.post("/logout", (req, res, next) => {
-    res
-        .cookie("token", null, { expires: new Date(Date.now()) })
-        .send("Logout successful !!");
+    res.clearCookie("token");
+    res.send("Logout successful !!");
 })
 
 

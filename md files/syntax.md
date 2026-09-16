@@ -225,3 +225,28 @@ Logical operators return data based on boolean logic (and, or, and nor).
         // this will decode your jwt token
         const decodedObj = await jwt.verify(token, 'SECRETKEY_PROVIDEDBYYOU');
         const { _id } = decodedObj;
+
+## .env in backend
+- first install dotenv package
+
+        npm i dotenv
+
+- create *.env file* at the **root** of your project
+- include .env inside **gitignore**
+- assign variables inside .env file like this
+
+        PORT = "7777"
+        JWT_SECRET = "secret@123"
+
+    - common  doubts (keep these in mind)
+        - quotes are optional
+        - never use comma or semicolon inside these variable
+- to access these variable inside project
+
+        require('dotenv').config();
+
+        // then 
+        const port = process.env.PORT
+
+# socket.io setup in frontend and backend
+    
