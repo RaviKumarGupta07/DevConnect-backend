@@ -248,5 +248,146 @@ Logical operators return data based on boolean logic (and, or, and nor).
         // then 
         const port = process.env.PORT
 
-# socket.io setup in frontend and backend
-    
+## socket.io setup in frontend and backend
+    https://github.com/RaviKumarGupta07/DevConnect-backend/blob/main/md%20files/SocketIO_Setup_Guide.md
+
+## schema and model creation mongoose
+
+### simple schema and model
+    const mongoose = require("mongoose");
+    var validator = require('validator');
+    const bcrypt = require("bcrypt");
+    const jwt = require("jsonwebtoken");
+    require('dotenv').config();
+
+    const userSchema = new mongoose.Schema({
+        firstName: {
+            type: String,
+            trim: true,
+            minLength: 3,
+            maxLength: 20,
+            required: true,
+        },
+        lastName: {
+            type: String,
+            trim: true,
+            maxLength: 20,
+        },
+        emailId: {
+            type: String,
+            trim: true,
+            lowercase: true,
+            required: true,
+            unique: true,
+            // immutable: true,
+            validate: (email) => {
+                const isEmailValid = validator.isEmail(email);
+                if (!isEmailValid) throw new Error("Email Not Valid");
+            }
+        },
+        password: {
+            type: String,
+            required: true,
+            trim: true,
+            // select : false ,
+        },
+        age: {
+            type: Number,
+            // min: 18,
+            // or 👇
+            validate: (value) => {
+                if (value < 18) throw new Error(" age must be >= 18")
+            }
+        },
+        gender: {
+            type: String,
+            // enum:["male","female","other"], 
+            // or 👇
+            validate: (value) => {
+                const arr = ["male", "female", "other"];
+                if (!arr.includes(value)) {
+                    throw new Error("gender must be one of these : male,female,other ")
+                }
+            }
+        },
+        photoURL: {
+            type: String,
+            default: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png",
+            validate : (value) =>{
+                if(!validator.isURL(value)) throw new Error("photoURL is not valid");
+            }
+        },
+        about: {
+            type: String,
+            maxLength: 500,
+        },
+        skills: {
+            type: [String],
+            validate: (arr) => {
+                if (arr.length > 10) throw new Error(" maximum 10 skills allowed");
+            }
+        },
+
+    })
+
+    userSchema.method("hashPassword", async function (plainTextPassword) {
+        const hashedPassword = await bcrypt.hash(plainTextPassword, 10);
+        return hashedPassword;
+    })
+
+    userSchema.method("getJWT", async function () {
+        const user = this;
+        const token = await jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+        return token;
+    })
+
+    userSchema.method("validatePassword", async function (plainTextPassword) {
+        const user = this;
+        const hashedPassword = user.password;
+        const isPasswordValid = await bcrypt.compare(plainTextPassword, hashedPassword);
+        return isPasswordValid;
+    })
+
+    const User = mongoose.model("User", userSchema);
+    module.exports = User;
+
+### a little bit complex schema and model 
+
+    const mongoose = require("mongoose");
+
+    const messageSchema = new mongoose.Schema({
+        text: {
+            type: String,
+            trim: true,
+            required: true,
+        },
+        senderId: {
+            type: mongoose.Schema.Types.ObjectId,
+            required: true,
+        },
+        senderName: {
+            type: String,
+            required: true,
+        },
+    })
+
+    const chatSchema = new mongoose.Schema({
+        participants: {
+            type: [{
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "User",
+            }],
+            required: true,
+            validate : (value)=>{
+                if(value.length<2) throw new Error("A chat must have at least 2 participants.");
+            }
+        },
+        messages: {
+            type: [messageSchema],
+        }
+    }, {
+        timestamps: true,
+    })
+
+    const Chat = mongoose.model("Chat", chatSchema);
+    module.exports = Chat;

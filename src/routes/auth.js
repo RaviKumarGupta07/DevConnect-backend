@@ -3,6 +3,7 @@ const { validateSignUpReqBody } = require("../utils/validate");
 const User = require("../models/user");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
+require('dotenv').config();
 
 // create user api post/signup
 router.post("/signup", async (req, res) => {
@@ -14,7 +15,7 @@ router.post("/signup", async (req, res) => {
         const user = new User(req.body);
         const savedUser = await user.save();
         // token generate having userId in payload
-        const token = jwt.sign({ _id: savedUser._id }, 'DevConnect791', { expiresIn: '1d' });
+        const token = jwt.sign({ _id: savedUser._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
         // send token as res.cookie
         res.cookie("token", token, {
             expires: new Date(Date.now() + 24 * 3600000), // cookie will be removed after 1 days 
@@ -46,7 +47,7 @@ router.post("/login", async (req, res) => {
 
         // token generate and stored in cookie
         const token = await user.getJWT();// using Schema.method
-        // const token = await jwt.sign({ _id: user._id }, 'DevConnect791', { expiresIn: '2d' }); 
+        // const token = await jwt.sign({ _id: user._id }, process.env.JWT_SECRET , { expiresIn: '2d' }); 
         res.cookie("token", token, {
             expires: new Date(Date.now() + 24 * 3600000), // cookie will be removed after 1 days 
         });

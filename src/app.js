@@ -4,9 +4,10 @@ const app = express();
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const initializeSocket = require("./utils/socket");
+const chatRouter = require("./routes/chat");
 require('dotenv').config();
 
-const port = process.env.PORT ;
+const port = process.env.PORT;
 
 app.use(cors({
     origin: "http://localhost:5173",
@@ -24,6 +25,7 @@ app.use("/", authRouter);
 app.use("/", profileRouter);
 app.use("/", requestRouter);
 app.use("/", userRouter);
+app.use("/", chatRouter);
 
 const server = require('http').createServer(app);
 initializeSocket(server);

@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 var validator = require('validator');
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+require('dotenv').config();
 
 const userSchema = new mongoose.Schema({
     firstName: {
@@ -56,8 +57,8 @@ const userSchema = new mongoose.Schema({
     photoURL: {
         type: String,
         default: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png",
-        validate : (value) =>{
-            if(!validator.isURL(value)) throw new Error("photoURL is not valid");
+        validate: (value) => {
+            if (!validator.isURL(value)) throw new Error("photoURL is not valid");
         }
     },
     about: {
@@ -80,7 +81,7 @@ userSchema.method("hashPassword", async function (plainTextPassword) {
 
 userSchema.method("getJWT", async function () {
     const user = this;
-    const token = await jwt.sign({ _id: user._id }, 'DevConnect791', { expiresIn: '1d' });
+    const token = await jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
     return token;
 })
 
