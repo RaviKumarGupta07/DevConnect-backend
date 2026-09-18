@@ -1,545 +1,137 @@
 # DevConnect-backend
-
-- Created a repository.
-- Initialized a repository.
-- `node_modules`, `package.json`, `package-lock.json`.
-- Installed Express.
-- Created a server.
-- Made the server listen on port `7777`.
-- Written request handlers for `/test` and `/hello`.
-- Installed Nodemon and updated scripts in `package.json`.
-
----
-
-## Git & GitHub
-
-- Initialized Git.
-- Created `.gitignore` and included `node_modules`.
-- Created a remote repository on GitHub.
-- Pushed all code to the remote `origin`.
-
----
-
-## Express Routes
-
-- Played with routes using the `app.use("/route", (req, res) => {})` method:
-    - `/`
-    - `/test`
-    - `/hello`
-
-- Learnt that the **order of routes matters a lot**.
-- By default, URLs we put in the browser are **GET API calls**.
-
-### Testing Other HTTP Methods
-
-- For testing other HTTP methods in Chrome Console:
-
-      fetch("http://localhost:7777/test", {
-          method: "DELETE",
-          body: "some stuff.."
-      })
-
-- **Good Practice:** For testing HTTP methods, use **Postman**.
-
-### Postman
-
-- Created a workspace.
-- Created a test collection.
-- Written logic to handle:
-    - GET
-    - POST
-    - PATCH
-    - PUT
-    - DELETE
-
-- Tested all of them using Postman.
-
----
-
-## Express Routing
-
-- Explored routing and the use of:
-    - `?`
-    - `*`
-    - `+`
-    - `()`
-
-- Used regex in routes:
-
-      /a/
-      /.*fly$/
-
-### Query Parameters
-
-- Read query parameters using `req.query`:
-
-      /user?id=123&address=UP
-
-### Dynamic Route Parameters
-
-- Read dynamic route parameters using `req.params`:
-
-      /user/:id/:address
-
----
-
-## Middleware
-
-- Learnt:
-    - What are middlewares?
-    - Why do we need them?
-    - How Express.js basically handles requests behind the scenes?
-    - Difference between `app.use()` and `app.all()`.
-
-- Written a dummy authentication middleware for admin.
-- Written a dummy authentication middleware for all user routes except `/user/login`.
-
-### Error Handling
-
-- Implemented error handling using:
-
-      app.use("/", (err, req, res, next) => {})
-
----
-
-# MongoDB & Mongoose
-
-- Installed Mongoose:
-
-      npm install mongoose
-
-- Mongoose helps communicate between our backend and database.
-    - Performs CRUD operations.
-    - Handles database connection.
-
-### Database Connection
-
-- Created:
-
-      src/config/database.js
-
-- Created `connectDB` function.
-
-- Used the following URI:
-
-      ...mongodb.net/devConnect
-
-- It creates the `devConnect` database if it does not exist.
-
-- **AKS:** Follow Mongoose resources and best practices.
-
-- Imported the `connectDB` function into `app.js`.
-
-- Followed the best practice:
-    - First connect to the database.
-    - Then make the app listen for incoming requests.
-
----
-
-## User Schema & Model
-
-- Created `userSchema` inside:
-
-      src/models/userSchema.js
-
-- Created the model:
-
-      mongoose.model("User", userSchema)
-
-- Industry standard says to keep the first letter capitalized in the model name.
-
----
-
-## Signup API
-
-- Created `POST /signup` route.
-- Created documents inside the `devConnect` database.
-- Added error handling using a `try...catch` block.
-
-### Saving POST Data
-
-- Learnt how to save POST data using `req.body`.
-
-- In Postman:
-
-      POST /signup
-      Body > raw > JSON
-
-- Learnt the difference between a **JSON object** and a **JavaScript object**.
-
----
-
-## Find User APIs
-
-### GET `/user`
-
-- Created API for finding a user.
-
-- Using:
-
-      Model.find({ emailId: req.body.email })
-
-- Using:
-
-      Model.findOne({})
-
-- Using:
-
-      Model.findById(id)
-
-  or:
-
-      Model.findById({ _id: id })
-
-- **AKS:** Use Mongoose documentation for more information.
-
----
-
-## Find All Users
-
-### GET `/feed`
-
-- Created API to find all users.
-
-      Model.find({})
-
-- **AKS:** Use Mongoose documentation for more information.
-
----
-
-## Delete User
-
-### DELETE `/delete`
-
-- Created API to delete a user by ID.
-
-      findByIdAndDelete(req.body.id)
-
-- **AKS:** Use Mongoose documentation for more information.
-
----
-
-## Update User
-
-### PATCH `/update`
-
-- Created API to update a user.
-
-      findByIdAndUpdate(req.body.id, { req.body })
-
-- **AKS:** Use Mongoose documentation for more information.
-
----
-
-# Schema Validation
-
-- Added validation in the schema using Mongoose type schema options and type-specific options on each field of the `userSchema`.
-
-- Used:
-
-      required
-      trim
-      lowercase
-      unique
-      default
-      validate: (v) => v
-      match: /regex/
-
----
-
-## Validator Library
-
-- Explored the `npm validator` library.
-
-- Used:
-    - `isEmail`
-    - `isStrongPassword`
-    - `isURL`
-
----
-
-## Sanitization — API-Level Validation
-
-- Implemented API-level validation for:
-    - `POST /signup`
-    - `PATCH /update`
-
-- Example:
-    - `emailId` and `password` should not be updated in `PATCH /update`.
-
-- 💀 **Never trust `req.body`.** This is why sanitization is needed.
-
-- Fields such as:
-
-      skills: { type: [String] }
-
-  should not have more than **10 elements** for:
-    - `POST /signup`
-    - `PATCH /update`
-
-- Validated data in the Signup API using a helper/utility function inside:
-
-      src/utils
-
----
-
-# Password Authentication
-
-- Installed the `bcrypt` library.
-
-- Created a password hash using:
-
-      bcrypt.hash
-
-## Login API
-
-- Created Login API.
-- Checked whether the email exists in the database.
-- Compared the password.
-- Threw an error if the password is invalid.
-
----
-
-# Cookies & JWT Authentication
-
-## Cookie Parser
-
-- Installed `cookie-parser`:
-
-      npm install cookie-parser
-
-- `cookie-parser` provides middleware to read cookies.
-
-- Sent a dummy cookie to the user for learning purposes.
-
-- Created:
-
-      GET /profile
-
-- Checked whether the cookie was received back correctly.
-
----
-
-## JSON Web Token
-
-- Installed `jsonwebtoken`:
-
-      npm install jsonwebtoken
-
-- In the Login API:
-    - Validated email and password.
-    - Generated a JWT.
-    - Sent the JWT to the user in cookies.
-
-- Read the cookie inside the Profile API.
-- Used the cookie to find the logged-in user.
-
----
-
-## User Authentication Middleware
-
-- Injected authentication logic into `userAuth` middleware.
-- This middleware handles the HTTP request and checks whether the user is logged in or not.
-
-- Added the `userAuth` middleware to:
-    - `GET /profile`
-    - `POST /sendConnectionRequest`
-
-- Set the expiry of the JWT token and cookies to **7 days**.
-
----
-
-## User Schema Methods
-
-- Created a `userSchema` method to get the JWT token:
-
-      getJWT()
-
-- Created a `userSchema` method to compare passwords:
-
-      validatePassword(plainTextPassword)
-
----
-
-# 11. API Routes & Routers
-
-- Created an `apiList.md` file to list all the APIs that I can think of.
-- Grouped multiple routes under respective routers.
-- Read multiple documentations for `express.Router`.
-- Created a `routes` folder for managing:
-    - Auth routes
-    - Profile routes
-    - Request routes
-
-- Created:
-    - `authRouter`
-    - `profileRouter`
-    - `requestRouter`
-
-- Imported these routers into `app.js`.
-
-### APIs Created
-
-- `POST /logout`
-- `PATCH /profile/edit`
-- `PATCH /passwordUpdate`
-
-- Made sure to validate all data in every `POST` and `PATCH` API.
-
----
-
-# 12. Connection Request
-
-- Created `connectionRequestSchema`.
-
-## Connection Request API
-
-- Created a dynamic route:
-
-      POST /request/send/:status/:userId
-
-### Validation
-
-- Included almost all corner cases.
-
-- Allowed statuses:
-
-      allowedStatus = ["ignored", "interested"]
-
-- Prevented users from sending requests to themselves:
-
-      if (fromUserId.equals(toUserId)) {
-          throw new Error("no user can send req to himself");
-      }
-
-- Prevented sending multiple connection requests:
-
-      if (connectionRequestAlreadyExists) {
-          throw new Error("no user send request more than 1");
-      }
-
----
-
-## Mongoose Pre-Save Middleware
-
-- Created:
-
-      connectionRequestSchema.pre("save", function() {
-          ...
-      })
-
----
-
-## Compound Indexing
-
-- Implemented compound indexing for faster responses.
-
-- Example: If 1 million connection requests exist, indexing can help improve query performance.
-
-      // indexing
-      connectionRequestSchema.index({
-          fromUserId: 1,
-          toUserId: 1
-      });
-
----
-
-# 13. Review Connection Requests
-
-## Connection Request API
-
-- Created a dynamic route:
-
-      POST /request/review/:status/:userId
-
-### `$or` Query
-
-- Used `$or` query:
-
-      Model.find({
-          $or: [
-              { q: q },
-              { q: q },
-              { q: q }
-          ]
-      })
-
----
-
-## POST vs GET Thought Process
-
-- Learnt the thought process between `POST` and `GET`.
-
-### POST
-
-- We can't let attackers send malicious data.
-
-### GET
-
-- We can't let attackers fetch unnecessary data.
-
----
-
-## Populate
-
-- Learnt how to use `ref` and `populate`.
-- Added the syntax to `syntax.md`.
-
----
-
-## APIs Created
-
-- `GET /user/receivedRequests`
-- `GET /user/connections`
-
----
-
-# 14. User Feed
-
-## GET `/user/feed`
-
-- Created `GET /user/feed`.
-
-- Learnt:
-    - `$and`
-    - `$or`
-    - `$nin`
-    - `$ne`
-    - Other MongoDB query operators.
-
-### Pagination
-
-- Implemented pagination using:
-
-      .skip()
-      .limit()
-
-- Created a complete API like:
-
-      GET /user/feed?page=2&limit=10
-
----
-
-# Live Chat Feature Using Socket.IO
-
-- Installed and configured the `socket.io` npm package in the backend.
-
-- Implemented:
-    - Event emitting.
-    - Event handling logic.
-
-- Created the Chat model.
-
-- When the `messageSend` event is emitted:
-    - The message is handled.
-    - The chat is saved inside the database.
-
-- Created:
-
-      GET /chats/:receiverId
-
-- This API gets all the chats of the user.
-
-- The complete Socket.IO setup is inside:
-
-      socketIo_setup_guide.md
+- create a repository
+- initialize a repository
+- node_modules , package.json , package-lock.json
+- installed express
+- created a server
+- made my server to listen to port ie 7777
+- written request handlers for /test , /hello
+- installed nodemon and updated scripts in pckg.json
+
+- initialized git
+- .gitignore (included node_modules)
+- created a remote repo on github
+- pushed all code to remote origin
+- played with routes (app.use("/route" , (req,res)=>{}) method) ie "/" , "/test" , "/hello"
+- learnt that order of routes matter a lot
+- by default urls we put on browser are GET api call
+- for testing other http methods , in chromes console used => 
+    - fetch("http://localhost:7777/test",{method:"DELETE",body:"some stuff.."})
+- good Practice :  for testing http methods , use Postman Software
+- created workspace > test colection 
+    - written logic to handle GET , POST , PATCH , PUT , DELETE API CALLS and tested them on postman
+- exploring routing and use of ? , * , + , () in the routes
+- use of reges in routes ie /a/ , /.*fly$/
+- Reading query parameters in routes using req.query => /user?id=123&address=UP
+- Reading dynamic route parameters using req.params => /user/:id/:address
+- what is middlewares? why do we need them ? ✅
+- How expressjs basically handles requests behind the scenes? ✅
+- difference between app.use and app.all
+- write a dummy auth middleware for admin 
+- write a dummy auth middleware for all user routes , except /user/login route
+- error handling using app.use("/",(err,req,res,next)=>{})
+
+- do # npm install mongoose  , mongoose => helps to communicate between  our backend and database (performs crud , db connection)
+- created src/config/database.js => connectDB funcn
+    - "...mongodb.net/devConnect" in uri(uniform resource identifier) it creates "devConnect" database if not exist.
+- AKS : folow mongoogse resources best 
+- imported connectDB function into app.js
+- performed best practice => first connect to database and then make your app to listen the server incoming request
+- created userSchema inside src/models/userSchema.js
+- create model => mongoose.model("User",userSchema)
+    - industry standard says to keep first letter capital letter in model name
+- created POST /signup route and created doucuments inside devConnect database
+    - error handling using try catch block
+
+- learnt saving post data using req.body (postman POST /signup : body>raw>json)
+- difference between json object and js object
+- created api for find user : GET /user api 
+    - by Model.find({emailId:req.body.email})
+    - by Model.findOne({})
+    - by Model.findById(id) or Model.findById({_id:id})<= use mongoose docs for more information:AKS
+- created api for find all : GET /feed api
+    - by Model.find({}) <= use mongoose docs for more information:AKS
+- created api for delete user by Id : DELETE /delete
+    - by findByIdAndDelete(req.body.id) <= use mongoose docs for more information:AKS
+- created api for update user : PATCH /update
+    - by findByIdAndUpdate(req.body.id , {req.body}) <= use mongoose docs for more information:AKS
+
+- added valitdtion in schema using mongoose type schema options , and type specific options on each field of user Schema 
+    - used required , trim , lowerCase ,unique , default , validate:(v)=>v , match:/regex/ etc... 
+- also explores npm validator library
+    - used isEmail , isStrongPassword , isURL validator methods given by this library 
+- sanitization -> api level validation
+    - for POST /signUp and PATCH /update , did api level validation
+        - ie. emailId , password should not be updated :in: POST /update 
+        - 💀 never trust on your req.body <= that is why sanitization is needed 
+        - some fields like , skills : {type:[String]} will not have more than 10 elements for POST /signup , PATCH /update
+
+- validate data in signup Api (helper / utility function inside src>utils folder)
+- install bcrypt library
+- create PasswordHash using bcrypt.hash
+- create login api
+    - check if email is in db or not 
+    - compare password & throw error if password is invalid
+
+- install cookie-parser lib (npm) <= it provides middleware to read the cookies
+- just send dummy cookie to user (for learning purpose)
+- create GET /profile API and check if you get the cookie back or not 
+- install jsonwebtoken lib (npm)
+- in login API , after email & password validation , generate a jwt and send it to user in cookies
+- read the cookies inside your profile API and find the logged in user
+- auth logic injected in userAuth middleware (this middleware will handle http request and check if user logged in or not)
+- added the user auth middleware in GET /profile API and new POST /sendConnectionRequest API
+- set the expiry of jwt token and cookies to 7 days
+- created userSchema method to het jwt token => getJWT()
+- created userSchema method to compare password => validatePassword(plainTextPassword)
+
+<!-- # 11 -->
+- created a apiList.md file to list all the Apis that I can think of
+    - group multiple routes under respective routers
+- read multiple documentaion for express.router
+- created routes folder for managing auth profile , request routers
+- created authRouter , profileRouter , requestRouter
+- imported these routers into app.js
+- created POST /logout API
+- created PATCH /profile/edit API
+- created PATCH /passwordUpdate API
+- make sure to validate all data in every post , patch apis
+
+<!-- # 12 -->
+- created connectionRequestSchema
+- created connection request api :-
+    - dynamic route POST /request/send/:status/:userId
+    - validation (almost all corner cases included)
+        - allowedStatus = ["ignored","interested"]
+        - if(fromUserId.equals(toUserId) throw new Error("no user can send req to himself ")
+        - if connection req already exist : throw new Error("no user send request more than 1 ")
+- connectionRequestSchema.pre("save",function(){..}) creted
+- done compound Indexing for faster responses (suppose if 1million connection requests exist)
+    - // indexing
+    - connectionRequestSchema.index({ fromUserId: 1, toUserId: 1,}) ;
+
+<!-- # 13 -->
+- created connection request api :-
+    - dynamic route POST /request/review/:status/:userId
+- $or query used
+    - Model.find({$or:[{q:q},{q:q},{q:q}]})
+- learnt thought process b/w POST and GET
+    - in POST => we cant let attackers send any malicious data
+    - in GET => we cant let attackers to fetch any unnecessary data
+- learnt how to use ref and populate (included in syntax.md)
+- created GET /user/receivedRequests
+- created GET /user/connections
+
+<!-- # 14 -->
+- created GET /user/feed
+    - learnt $and , $or , $nin ,$ne and other query operator
+    - implemented pagination using .skip() and .limit() method
+    - created full GET /user/feed?page=2&limit=10 kind of api
+
+#### live chat feature using socket.io
+- npm pckg socket.io setup in backend
+    - event emit and handiling logic 
+    - then chat model created 
+    - while messageSend event emits then chats are saved inside database
+    - created get /chats/:receiverId api to get all the chats of the user
+        - the whole setup is inside socketIo_setup_guide.md
