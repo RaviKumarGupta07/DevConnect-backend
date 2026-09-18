@@ -126,3 +126,11 @@
     - learnt $and , $or , $nin ,$ne and other query operator
     - implemented pagination using .skip() and .limit() method
     - created full GET /user/feed?page=2&limit=10 kind of api
+
+#### live chat feature using socket.io
+- npm pckg socket.io setup in backend
+    - event emit and handiling logic 
+    - then chat model created 
+    - while messageSend event emits then chats are saved inside database
+    - created get /chats/:receiverId api to get all the chats of the user
+        - the whole setup is inside socketIo_setup_guide.md
